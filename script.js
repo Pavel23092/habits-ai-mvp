@@ -1,18 +1,28 @@
-// Ждем, пока вся страница загрузится
 document.addEventListener('DOMContentLoaded', function() {
-
-    // Находим наши элементы на странице
-    const welcomeScreen = document.getElementById('welcome-screen');
-    const goalScreen = document.getElementById('goal-screen');
-    const startButton = document.getElementById('start-button');
-
-    // Добавляем "слушателя" на кнопку: что делать, когда на нее нажмут
-    startButton.addEventListener('click', function() {
-        // Убираем класс 'active' у приветственного экрана (он скроется)
-        welcomeScreen.classList.remove('active');
+    
+    // Находим все кнопки, у которых есть атрибут 'data-next'
+    const navigationButtons = document.querySelectorAll('[data-next]');
+    
+    // Проходимся по каждой кнопке
+    navigationButtons.forEach(button => {
         
-        // Добавляем класс 'active' экрану с целью (он появится)
-        goalScreen.classList.add('active');
+        // Добавляем каждой кнопке "слушателя" на клик
+        button.addEventListener('click', function() {
+            
+            // Находим текущий активный экран
+            const currentScreen = document.querySelector('.screen.active');
+            
+            // Получаем ID следующего экрана из атрибута 'data-next' кнопки
+            const nextScreenId = button.dataset.next;
+            const nextScreen = document.getElementById(nextScreenId);
+            
+            if (currentScreen && nextScreen) {
+                // Скрываем текущий экран
+                currentScreen.classList.remove('active');
+                // Показываем следующий
+                nextScreen.classList.add('active');
+            }
+            
+        });
     });
-
 });
