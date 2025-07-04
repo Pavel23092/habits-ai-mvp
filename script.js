@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Получаем доступ ко всем нашим элементам на странице ---
     const onboardingFlow = document.getElementById('onboarding-flow');
     const mainApp = document.getElementById('main-app');
-    const mainScreen = document.getElementById('main-screen');
-    const progressScreen = document.getElementById('progress-screen');
     const successOverlay = document.getElementById('success-overlay');
 
     // --- БАЗА ДАННЫХ (на localStorage) ---
@@ -102,8 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- ГЛАВНЫЙ ОБРАБОТЧИК ВСЕХ НАЖАТИЙ ---
     document.body.addEventListener('click', function(event) {
-        const button = event.target;
-        
+        const button = event.target.closest('button'); // Ищем именно кнопку
+        if (!button) return; // Если клик не по кнопке, выходим
+
         // Навигация по онбордингу
         if (button.dataset.next && button.closest('#onboarding-flow')) {
             showScreen(button.dataset.next);
@@ -129,48 +128,38 @@ document.addEventListener('DOMContentLoaded', function() {
             showScreen('main-screen');
         }
 
-        // --- ВОТ ОБРАБОТЧИК КНОПКИ "СДЕЛАЛ!" ---
+        // Кнопка "СДЕЛАЛ!"
         if (button.classList.contains('success-button')) {
             const today = new Date().toISOString().split('T')[0];
-            
-            // Защита от повторного нажатия
             if (db.progress[today]) return; 
 
-            // Обновляем прогресс
             db.progress[today] = true;
             
-            // Обновляем стрики
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-            if (db.progress[yesterday]) {
-                db.streaks.current += 1;
-            } else {
-                db.streaks.current = 1;
-            }
+            db.streaks.current = db.progress[yesterday] ? db.streaks.current + 1 : 1;
             
             if (db.streaks.current > db.streaks.best) {
                 db.streaks.best = db.streaks.current;
             }
-            // Кнопка сброса прогресса (для тестирования)
-if (button.id === 'reset-button') {
-    // Запрашиваем подтверждение, чтобы не сбросить случайно
-    const isConfirmed = confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?');
-    if (isConfirmed) {
-        localStorage.removeItem('habitsAIDB'); // Удаляем нашу базу данных
-        location.reload(); // Перезагружаем страницу
-    }
-}
             
             saveDB();
             
-            // Показываем анимацию победы
             successOverlay.classList.add('active');
 
-            // Через 2 секунды скрываем анимацию и переходим на экран прогресса
             setTimeout(() => {
                 successOverlay.classList.remove('active');
                 renderProgress();
                 showScreen('progress-screen');
             }, 2000);
+        }
+
+        // Кнопка сброса прогресса (для тестирования)
+        if (button.id === 'reset-button') {
+            const isConfirmed = confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?');
+            if (isConfirmed) {
+                localStorage.removeItem('habitsAIDB');
+                location.reload();
+            }
         }
     });
 
