@@ -24,18 +24,20 @@
     </div>
 
     <!-- Экран 2: Ввод Цели -->
-    <div id="goal-screen" class="screen">
-        <header>
-            <h1>Шаг 1: Ваше Направление</h1>
-        </header>
-        <main>
-            <p>Каким человеком вы хотите стать?</p>
-            <div class="input-field">Например: стать продуктивным</div>
-        </main>
-        <footer>
-            <button data-next="identity-screen" class="main-button">Далее →</button>
-        </footer>
-    </div>
+
+<div id="goal-screen" class="screen">
+    <header>
+        <h1>Шаг 1: Ваше Направление</h1>
+    </header>
+    <main>
+        <p>Каким человеком вы хотите стать?</p>
+        <!-- Вот наше изменение -->
+        <input type="text" class="input-field" placeholder="Например: стать продуктивным">
+    </main>
+    <footer>
+        <button data-next="identity-screen" class="main-button">Далее →</button>
+    </footer>
+</div>
 
     <!-- Экран 3: Предложение Идентичности -->
     <div id="identity-screen" class="screen">
