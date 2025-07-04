@@ -75,3 +75,15 @@ p { font-size: 16px; line-height: 1.5; color: #555; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { to { transform: scale(1); } }
+
+/* Стили для кнопки сброса */
+.reset-button {
+    margin-top: 30px;
+    background-color: #e57373; /* Красный цвет для предупреждения */
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: white;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
