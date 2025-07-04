@@ -1,39 +1,110 @@
 document.addEventListener('DOMContentLoaded', function() {
     const onboardingFlow = document.getElementById('onboarding-flow');
     const mainApp = document.getElementById('main-app');
+    
+    // --- БАЗА ДАННЫХ (на localStorage) ---
+    let db = {
+        onboardingCompleted: false,
+        progress: {}, // { '2024-07-04': true }
+        streaks: { current: 0, best: 0 }
+    };
 
-    // --- Функция для навигации ---
-    function navigate(flowContainerId, nextScreenId) {
-        // Скрываем все контейнеры
-        document.querySelectorAll('.flow-container').forEach(c => c.classList.remove('active'));
-        // Скрываем все экраны внутри всех контейнеров
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-
-        // Показываем нужный контейнер и экран
-        const targetFlow = document.getElementById(flowContainerId);
-        const targetScreen = document.getElementById(nextScreenId);
-        if (targetFlow && targetScreen) {
-            targetFlow.classList.add('active');
-            targetScreen.classList.add('active');
+    // --- Функции для работы с базой данных ---
+    function loadDB() {
+        const savedDB = localStorage.getItem('habitsAIDB');
+        if (savedDB) {
+            db = JSON.parse(savedDB);
         }
     }
 
-    // --- Обработчики кнопок ---
+    function saveDB() {
+        localStorage.setItem('habitsAIDB', JSON.stringify(db));
+    }
+
+    // --- Функции для отображения ---
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function showFlow(flowId) {
+        document.querySelectorAll('.flow-container').forEach(f => f.classList.remove('active'));
+        document.getElementById(flowId).classList.add('active');
+    }
+    
+    function renderProgress() {
+        // Обновляем счетчики серий
+        document.querySelector('.streaks-container .streak-item:nth-child(1) h3').textContent = `${db.streaks.current} 🔥`;
+        document.querySelector('.streaks-container .streak-item:nth-child(2) h3').textContent = `${db.streaks.best} 🏆`;
+        // Здесь в будущем будет отрисовка календаря
+    }
+    
+    // --- Обработчики Кнопок ---
     document.body.addEventListener('click', function(event) {
-        // Навигация по 'data-next'
-        if (event.target.dataset.next) {
-            const currentFlow = event.target.closest('.flow-container');
-            navigate(currentFlow.id, event.target.dataset.next);
+        const button = event.target;
+        
+        // Навигация по онбордингу
+        if (button.dataset.next && button.closest('#onboarding-flow')) {
+            showScreen(button.dataset.next);
+        }
+
+        // Завершение онбординга
+        if (button.id === 'finish-onboarding-button') {
+            db.onboardingCompleted = true;
+            saveDB();
+            showFlow('main-app');
+            showScreen('main-screen');
+        }
+
+        // Переход на экран прогресса
+        if (button.dataset.next === 'progress-screen') {
+            renderProgress();
+            showScreen('progress-screen');
         }
         
-        // Завершение онбординга
-        if (event.target.id === 'finish-onboarding-button') {
-            // В будущем здесь будет сохранение в localStorage
-            navigate('main-app', 'main-screen');
+        // Возврат на главный экран
+        if (button.dataset.next === 'main-screen') {
+            showScreen('main-screen');
+        }
+
+        // Кнопка "СДЕЛАЛ!"
+        if (button.classList.contains('success-button')) {
+            const today = new Date().toISOString().split('T')[0]; // '2024-07-04'
+            
+            if (!db.progress[today]) {
+                db.progress[today] = true;
+                
+                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                if (db.progress[yesterday]) {
+                    db.streaks.current += 1; // Продолжаем серию
+                } else {
+                    db.streaks.current = 1; // Начинаем новую
+                }
+                
+                if (db.streaks.current > db.streaks.best) {
+                    db.streaks.best = db.streaks.current;
+                }
+                
+                saveDB();
+                
+                // Показываем обновленный прогресс
+                renderProgress();
+                showScreen('progress-screen');
+                
+                // Добавляем эффект!
+                button.textContent = '🎉 Отлично!';
+                setTimeout(() => { button.textContent = '✅ Сделал!'; }, 2000);
+            }
         }
     });
 
-    // --- Инициализация ---
-    // В будущем здесь будет проверка, пройден ли онбординг
-    navigate('onboarding-flow', 'welcome-screen');
+    // --- ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ---
+    loadDB();
+    if (db.onboardingCompleted) {
+        showFlow('main-app');
+        showScreen('main-screen');
+    } else {
+        showFlow('onboarding-flow');
+        showScreen('welcome-screen');
+    }
 });
