@@ -2,26 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Habits AI</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- Блок Онбординга (изначально виден) -->
-    <div id="onboarding-flow" class="flow-container active">
+    <div id="onboarding-flow" class="flow-container">
         <!-- Экран 1: Приветствие -->
-        <div id="welcome-screen" class="screen active">
-            <header>
-                <div class="icon">👋</div>
-                <h1>Добро пожаловать!</h1>
-            </header>
+        <div id="welcome-screen" class="screen">
+            <header><div class="icon">👋</div><h1>Добро пожаловать!</h1></header>
             <main>
                 <p>Это не просто трекер привычек. Это ваш личный ИИ-коуч для изменения <strong>идентичности</strong>.</p>
             </main>
-            <footer>
-                <button data-next="goal-screen" class="main-button">Начать свой путь</button>
-            </footer>
+            <footer><button data-next="goal-screen" class="main-button">Начать свой путь</button></footer>
         </div>
         <!-- Экран 2: Ввод Цели -->
         <div id="goal-screen" class="screen">
@@ -63,7 +58,7 @@
         <!-- Экран 6: Главный экран "Мой День" -->
         <div id="main-screen" class="screen">
             <header class="app-header">
-                <h2>Среда, 24 апреля</h2>
+                <h2>Сегодня</h2>
                 <button data-next="progress-screen" class="icon-button">🗓️</button>
             </header>
             <main>
@@ -80,32 +75,33 @@
             <footer><button class="main-button success-button">✅ Сделал!</button></footer>
         </div>
         <!-- Экран 7: Экран Прогресса "Мой Путь" -->
-
-<div id="progress-screen" class="screen">
-    <header class="app-header">
-        <button data-next="main-screen" class="icon-button">←</button>
-        <h2>Мой Путь</h2>
-    </header>
-    <main>
-        <div class="streaks-container">
-            <!-- ... -->
+        <div id="progress-screen" class="screen">
+            <header class="app-header">
+                <button data-next="main-screen" class="icon-button">←</button>
+                <h2>Мой Путь</h2>
+                <div style="width: 24px;"></div> <!-- Пустышка для выравнивания -->
+            </header>
+            <main>
+                <div class="streaks-container">
+                    <div class="streak-item"><h3>0 🔥</h3><p>Текущая серия</p></div>
+                    <div class="streak-item"><h3>0 🏆</h3><p>Лучшая серия</p></div>
+                </div>
+                <div class="calendar-container"></div>
+                <button id="reset-button" class="reset-button">Сбросить прогресс (для теста)</button>
+            </main>
         </div>
-        <div class="calendar-container">
-            <!-- Сюда JavaScript добавит календарь -->
+    </div>
+    
+    <!-- Экран 8: Анимация Успеха (изначально скрыт) -->
+    <div id="success-overlay" class="overlay">
+        <div class="success-message">
+            <h1>🎉</h1>
+            <h2>Великолепно!</h2>
+            <p>Еще один голос за твою новую идентичность!</p>
         </div>
-        <!-- ВОТ НАША НОВАЯ КНОПКА -->
-        <button id="reset-button" class="reset-button">Сбросить прогресс (для теста)</button>
-    </main>
-</div>
+    </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-<!-- Экран 8: Анимация Успеха (изначально скрыт) -->
-<div id="success-overlay" class="overlay">
-    <div class="success-message">
-        <h1>🎉</h1>
-        <h2>Великолепно!</h2>
-        <p>Еще один голос за твою новую идентичность!</p>
-    </div>
-</div>
