@@ -14,18 +14,20 @@ body {
 
 /* Логика экранов */
 .screen {
-    display: none; /* Все экраны по умолчанию скрыты */
+    display: none;
     flex-direction: column;
     height: 100%;
     text-align: center;
+    animation: fadeIn 0.5s; /* Анимация появления */
 }
 .screen.active {
-    display: flex; /* Активный экран показывается */
+    display: flex;
 }
 
 /* Верхняя часть */
 header {
-    margin-top: 20vh;
+    margin-top: 15vh;
+    flex-shrink: 0;
 }
 .icon {
     font-size: 48px;
@@ -36,10 +38,15 @@ h1 {
     margin: 0;
     font-weight: bold;
 }
+h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
 
 /* Основной контент */
 main {
     margin-top: 24px;
+    flex-grow: 1;
 }
 p {
     font-size: 16px;
@@ -50,21 +57,22 @@ strong {
     color: #000;
 }
 
-/* Стили для поля ввода */
-.input-field {
+/* Стили для поля ввода и карточек */
+.input-field, .card {
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    padding: 16px;
+    padding: 20px;
     margin-top: 20px;
-    color: #888;
-    font-size: 16px;
+    text-align: center;
 }
+.card h2 { color: #50A8EB; }
 
 /* Нижняя часть с кнопкой */
 footer {
     margin-top: auto;
     padding-bottom: 20px;
+    flex-shrink: 0;
 }
 .main-button {
     width: 100%;
@@ -77,4 +85,13 @@ footer {
     border-radius: 12px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(80, 168, 235, 0.3);
+    transition: transform 0.1s ease;
+}
+.main-button:active {
+    transform: scale(0.98);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
