@@ -150,6 +150,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (db.streaks.current > db.streaks.best) {
                 db.streaks.best = db.streaks.current;
             }
+            // Кнопка сброса прогресса (для тестирования)
+if (button.id === 'reset-button') {
+    // Запрашиваем подтверждение, чтобы не сбросить случайно
+    const isConfirmed = confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?');
+    if (isConfirmed) {
+        localStorage.removeItem('habitsAIDB'); // Удаляем нашу базу данных
+        location.reload(); // Перезагружаем страницу
+    }
+}
             
             saveDB();
             
