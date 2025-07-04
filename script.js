@@ -1,49 +1,39 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
     const onboardingFlow = document.getElementById('onboarding-flow');
     const mainApp = document.getElementById('main-app');
 
-    // Показываем онбординг или главное приложение в зависимости от того, пройдена ли регистрация
-    // Пока мы имитируем это, всегда начиная с онбординга
-    onboardingFlow.style.display = 'block';
+    // --- Функция для навигации ---
+    function navigate(flowContainerId, nextScreenId) {
+        // Скрываем все контейнеры
+        document.querySelectorAll('.flow-container').forEach(c => c.classList.remove('active'));
+        // Скрываем все экраны внутри всех контейнеров
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
-    // --- Логика навигации по онбордингу ---
-    const navigationButtons = document.querySelectorAll('[data-next]');
-    navigationButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const currentScreen = document.querySelector('#onboarding-flow .screen.active');
-            const nextScreenId = button.dataset.next;
-            const nextScreen = document.getElementById(nextScreenId);
-            
-            if (currentScreen && nextScreen) {
-                currentScreen.classList.remove('active');
-                nextScreen.classList.add('active');
-            }
-        });
+        // Показываем нужный контейнер и экран
+        const targetFlow = document.getElementById(flowContainerId);
+        const targetScreen = document.getElementById(nextScreenId);
+        if (targetFlow && targetScreen) {
+            targetFlow.classList.add('active');
+            targetScreen.classList.add('active');
+        }
+    }
+
+    // --- Обработчики кнопок ---
+    document.body.addEventListener('click', function(event) {
+        // Навигация по 'data-next'
+        if (event.target.dataset.next) {
+            const currentFlow = event.target.closest('.flow-container');
+            navigate(currentFlow.id, event.target.dataset.next);
+        }
+        
+        // Завершение онбординга
+        if (event.target.id === 'finish-onboarding-button') {
+            // В будущем здесь будет сохранение в localStorage
+            navigate('main-app', 'main-screen');
+        }
     });
 
-    // --- Логика перехода к главному приложению ---
-    const finishOnboardingButton = document.getElementById('finish-onboarding-button');
-    finishOnboardingButton.addEventListener('click', function() {
-        onboardingFlow.style.display = 'none';
-        mainApp.style.display = 'block';
-        document.getElementById('main-screen').classList.add('active');
-    });
-
-    // --- Логика навигации в главном приложении ---
-    const progressButton = document.getElementById('progress-button');
-    const backButton = document.getElementById('back-button');
-    const mainScreen = document.getElementById('main-screen');
-    const progressScreen = document.getElementById('progress-screen');
-
-    progressButton.addEventListener('click', function() {
-        mainScreen.classList.remove('active');
-        progressScreen.classList.add('active');
-    });
-
-    backButton.addEventListener('click', function() {
-        progressScreen.classList.remove('active');
-        mainScreen.classList.add('active');
-    });
-
+    // --- Инициализация ---
+    // В будущем здесь будет проверка, пройден ли онбординг
+    navigate('onboarding-flow', 'welcome-screen');
 });
