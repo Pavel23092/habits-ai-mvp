@@ -1,28 +1,49 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Находим все кнопки, у которых есть атрибут 'data-next'
+    const onboardingFlow = document.getElementById('onboarding-flow');
+    const mainApp = document.getElementById('main-app');
+
+    // Показываем онбординг или главное приложение в зависимости от того, пройдена ли регистрация
+    // Пока мы имитируем это, всегда начиная с онбординга
+    onboardingFlow.style.display = 'block';
+
+    // --- Логика навигации по онбордингу ---
     const navigationButtons = document.querySelectorAll('[data-next]');
-    
-    // Проходимся по каждой кнопке
     navigationButtons.forEach(button => {
-        
-        // Добавляем каждой кнопке "слушателя" на клик
         button.addEventListener('click', function() {
-            
-            // Находим текущий активный экран
-            const currentScreen = document.querySelector('.screen.active');
-            
-            // Получаем ID следующего экрана из атрибута 'data-next' кнопки
+            const currentScreen = document.querySelector('#onboarding-flow .screen.active');
             const nextScreenId = button.dataset.next;
             const nextScreen = document.getElementById(nextScreenId);
             
             if (currentScreen && nextScreen) {
-                // Скрываем текущий экран
                 currentScreen.classList.remove('active');
-                // Показываем следующий
                 nextScreen.classList.add('active');
             }
-            
         });
     });
+
+    // --- Логика перехода к главному приложению ---
+    const finishOnboardingButton = document.getElementById('finish-onboarding-button');
+    finishOnboardingButton.addEventListener('click', function() {
+        onboardingFlow.style.display = 'none';
+        mainApp.style.display = 'block';
+        document.getElementById('main-screen').classList.add('active');
+    });
+
+    // --- Логика навигации в главном приложении ---
+    const progressButton = document.getElementById('progress-button');
+    const backButton = document.getElementById('back-button');
+    const mainScreen = document.getElementById('main-screen');
+    const progressScreen = document.getElementById('progress-screen');
+
+    progressButton.addEventListener('click', function() {
+        mainScreen.classList.remove('active');
+        progressScreen.classList.add('active');
+    });
+
+    backButton.addEventListener('click', function() {
+        progressScreen.classList.remove('active');
+        mainScreen.classList.add('active');
+    });
+
 });
