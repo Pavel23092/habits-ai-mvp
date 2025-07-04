@@ -4,76 +4,74 @@ body {
     background-color: #F3F3F3;
     color: #212121;
     margin: 0;
-    padding: 0 20px 20px 20px;
-    height: calc(100vh - 20px);
     -webkit-font-smoothing: antialiased;
-    overflow: hidden;
+    /* Убираем overflow: hidden, чтобы разрешить прокрутку */
 }
 
 /* Логика контейнеров и экранов */
-.flow-container, .screen { display: none; height: 100%; flex-direction: column; }
+.flow-container, .screen { display: none; min-height: 100vh; flex-direction: column; box-sizing: border-box; }
 .flow-container.active, .screen.active { display: flex; }
-.screen { animation: fadeIn 0.3s ease-in-out; }
+.screen { animation: fadeIn 0.3s ease-in-out; padding: 20px; }
 
 /* Верхняя часть (Онбординг) */
 #onboarding-flow header { margin-top: 15vh; text-align: center; }
 #onboarding-flow .icon { font-size: 48px; }
 #onboarding-flow h1 { font-size: 28px; }
-#onboarding-flow main { text-align: center; }
-#onboarding-flow footer { margin-top: auto; }
+#onboarding-flow main { text-align: center; flex-grow: 1; }
+#onboarding-flow footer { margin-top: auto; padding-bottom: 20px; }
 
 /* Верхняя часть (Приложение) */
-.app-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+.app-header { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 20px 20px 10px 20px; box-sizing: border-box; background: #F3F3F3; }
 .app-header h2 { font-size: 18px; margin: 0; }
-.icon-button { background: none; border: none; font-size: 24px; cursor: pointer; }
+.icon-button { background: none; border: none; font-size: 24px; cursor: pointer; padding: 5px; }
 
 /* Основной контент */
+main { flex-grow: 1; }
 p { font-size: 16px; line-height: 1.5; color: #555; }
-.input-field { width: calc(100% - 40px); background-color: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-top: 20px; font-size: 16px; }
+.input-field { width: calc(100% - 42px); background-color: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-top: 20px; font-size: 16px; }
 .card { background-color: #fff; border-radius: 12px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 .card h2 { color: #50A8EB; margin: 0; }
 
 /* Элементы главного экрана */
-.identity-reminder p { text-align: center; font-size: 18px; }
+.identity-reminder p { text-align: center; font-size: 18px; margin-top: 10px; }
 .habit-card, .tip-card { text-align: left; margin-bottom: 16px; }
 .tip-card h3 { margin-top: 0; font-size: 16px; color: #50A8EB; }
+#main-screen footer { margin-top: auto; padding-bottom: 20px; }
 
 /* Элементы экрана прогресса */
+#progress-screen main { text-align: center; }
 .streaks-container { display: flex; justify-content: space-around; text-align: center; margin: 20px 0; }
 .streaks-container h3 { font-size: 24px; margin: 0; }
 .streaks-container p { font-size: 14px; color: #888; margin-top: 4px; }
+
+/* Стили для календаря */
+.calendar-container h3 { font-size: 20px; margin-bottom: 20px; }
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* Вот исправление - всегда 7 колонок */
+    gap: 5px; /* Уменьшим отступ для мобильных */
+    text-align: center;
+}
+.day-name { font-weight: bold; color: #888; font-size: 14px; padding: 5px 0; }
+.day-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px; /* Немного увеличим высоту */
+    border-radius: 50%;
+}
+.day-cell.done { background-color: #4CD964; color: white; }
+.day-cell.today { border: 2px solid #50A8EB; }
 
 /* Кнопки */
 .main-button { width: 100%; padding: 16px; font-size: 16px; font-weight: bold; color: white; background-color: #50A8EB; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(80, 168, 235, 0.3); }
 .success-button { background-color: #4CD964; box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4); }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 /* Стили для оверлея успеха */
-.overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none; /* Скрыт по умолчанию */
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-    animation: fadeIn 0.3s;
-}
-.overlay.active {
-    display: flex;
-}
-.success-message {
-    background-color: white;
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    transform: scale(0.9);
-    animation: popIn 0.3s ease-out forwards;
-}
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 100; animation: fadeIn 0.3s; }
+.overlay.active { display: flex; }
+.success-message { background-color: white; padding: 30px; border-radius: 20px; text-align: center; transform: scale(0.9); animation: popIn 0.3s ease-out forwards; }
 .success-message h1 { margin-top: 0; font-size: 56px; }
 
-@keyframes popIn {
-  to { transform: scale(1); }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { to { transform: scale(1); } }
