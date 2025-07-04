@@ -1,77 +1,50 @@
-/* ... (все стили, что были до этого, остаются) ... */
-
-/* Добавляем новые стили для основного приложения */
-.app-container {
-    display: none; /* Основное приложение по умолчанию скрыто */
-}
-.app-container.active {
-    display: block;
-}
-
-.app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-top: 0;
-    padding: 10px 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #F3F3F3;
-    padding: 10px 20px;
-    box-sizing: border-box;
-}
-.app-header h2 {
-    font-size: 18px;
+/* Общие стили */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #F3F3F3;
+    color: #212121;
     margin: 0;
-}
-.icon-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
+    padding: 0 20px 20px 20px;
+    height: calc(100vh - 20px);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
 }
 
-#main-screen main {
-    padding-top: 60px; /* Отступ от фиксированного хедера */
-}
+/* Логика контейнеров и экранов */
+.flow-container, .screen { display: none; height: 100%; flex-direction: column; }
+.flow-container.active, .screen.active { display: flex; }
+.screen { animation: fadeIn 0.3s ease-in-out; }
 
-.identity-reminder {
-    text-align: center;
-    margin-bottom: 24px;
-}
-.identity-reminder p {
-    font-size: 18px;
-    color: #333;
-}
+/* Верхняя часть (Онбординг) */
+#onboarding-flow header { margin-top: 15vh; text-align: center; }
+#onboarding-flow .icon { font-size: 48px; }
+#onboarding-flow h1 { font-size: 28px; }
+#onboarding-flow main { text-align: center; }
+#onboarding-flow footer { margin-top: auto; }
 
-.habit-card, .tip-card {
-    background-color: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 16px;
-    text-align: left;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.habit-card h2 {
-    margin-top: 0;
-    font-size: 20px;
-}
-.tip-card h3 {
-    margin-top: 0;
-    font-size: 16px;
-    color: #50A8EB;
-}
+/* Верхняя часть (Приложение) */
+.app-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+.app-header h2 { font-size: 18px; margin: 0; }
+.icon-button { background: none; border: none; font-size: 24px; cursor: pointer; }
 
-.success-button {
-    background-color: #4CD964; /* Зеленый цвет успеха */
-    box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4);
-}
+/* Основной контент */
+p { font-size: 16px; line-height: 1.5; color: #555; }
+.input-field { width: calc(100% - 40px); background-color: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-top: 20px; font-size: 16px; }
+.card { background-color: #fff; border-radius: 12px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.card h2 { color: #50A8EB; margin: 0; }
 
-#progress-screen main {
-    padding-top: 60px;
-    text-align: center;
-}
+/* Элементы главного экрана */
+.identity-reminder p { text-align: center; font-size: 18px; }
+.habit-card, .tip-card { text-align: left; margin-bottom: 16px; }
+.tip-card h3 { margin-top: 0; font-size: 16px; color: #50A8EB; }
 
-/* (весь остальной CSS-код, который был до этого, должен быть выше этих новых стилей) */
+/* Элементы экрана прогресса */
+.streaks-container { display: flex; justify-content: space-around; text-align: center; margin: 20px 0; }
+.streaks-container h3 { font-size: 24px; margin: 0; }
+.streaks-container p { font-size: 14px; color: #888; margin-top: 4px; }
+
+/* Кнопки */
+.main-button { width: 100%; padding: 16px; font-size: 16px; font-weight: bold; color: white; background-color: #50A8EB; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(80, 168, 235, 0.3); }
+.success-button { background-color: #4CD964; box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
