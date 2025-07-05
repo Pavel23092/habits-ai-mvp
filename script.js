@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     // --- Конфигурация Firebase ---
     const firebaseConfig = {
         apiKey: "AIzaSyBpaUjpnrH2QfLlK1QSr_KGeCJEt_U0OBU",
@@ -13,25 +13,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tg = window.Telegram.WebApp;
     tg.expand();
     
-    // --- Глобальные переменные ---
     let userId = null;
-    // Наша новая структура данных по умолчанию
     let dbData = {
         habits: [
-            { id: 'h1', icon: '💧', text: 'Выпить стакан воды после пробуждения' },
-            { id: 'h2', icon: '✍️', text: 'Определить главную задачу дня' },
-            { id: 'h3', icon: '📖', text: 'Читать 1 страницу перед сном' }
+            { id: 'h1', icon: '💧', text: 'Выпить стакан воды' },
+            { id: 'h2', icon: '✍️', text: 'Определить главную задачу' },
+            { id: 'h3', icon: '📖', text: 'Читать 1 страницу' }
         ],
-        progress: {}, // Пример: { '2024-07-06': ['h1', 'h3'] }
+        progress: {},
     };
     
     const habitListEl = document.getElementById('habit-list');
     const progressBarEl = document.getElementById('progress-bar');
     const progressLabelEl = document.getElementById('progress-label');
 
-    // --- Функция отрисовки главного экрана ---
     function renderMainScreen() {
-        habitListEl.innerHTML = ''; // Очищаем список
+        habitListEl.innerHTML = '';
         const todayStr = new Date().toISOString().split('T')[0];
         const todayProgress = dbData.progress[todayStr] || [];
 
@@ -50,66 +47,68 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateProgressBar();
     }
     
-    // --- Функция обновления прогресс-бара ---
     function updateProgressBar() {
         const todayStr = new Date().toISOString().split('T')[0];
         const todayProgress = dbData.progress[todayStr] || [];
         const totalHabits = dbData.habits.length;
         const doneHabits = todayProgress.length;
-        
         const percentage = totalHabits > 0 ? (doneHabits / totalHabits) * 100 : 0;
         progressBarEl.style.width = `${percentage}%`;
         progressLabelEl.textContent = `Выполнено ${doneHabits} из ${totalHabits}`;
     }
 
-    // --- Обработчик кликов по списку привычек ---
     habitListEl.addEventListener('click', async (event) => {
         const habitItem = event.target.closest('.habit-item');
-        if (habitItem && !habitItem.classList.contains('done')) {
-            const habitId = habitItem.dataset.id;
-            const todayStr = new Date().toISOString().split('T')[0];
+        if (!userId || !habitItem || habitItem.classList.contains('done')) return;
+        
+        tg.HapticFeedback.notificationOccurred('success');
+        const habitId = habitItem.dataset.id;
+        const todayStr = new Date().toISOString().split('T')[0];
 
-            // Обновляем локальные данные
-            if (!dbData.progress[todayStr]) {
-                dbData.progress[todayStr] = [];
-            }
-            dbData.progress[todayStr].push(habitId);
-            
-            // Визуальное обновление и сохранение
-            habitItem.classList.add('done');
-            updateProgressBar();
-            tg.HapticFeedback.notificationOccurred('success');
-            await firestore.collection('users').doc(userId).update({
-                [`progress.${todayStr}`]: dbData.progress[todayStr]
-            });
+        if (!dbData.progress[todayStr]) {
+            dbData.progress[todayStr] = [];
         }
+        dbData.progress[todayStr].push(habitId);
+        
+        habitItem.classList.add('done');
+        updateProgressBar();
+        
+        // Обновляем только одно поле в Firestore для эффективности
+        await firestore.collection('users').doc(userId).set({
+            progress: dbData.progress
+        }, { merge: true });
     });
 
-    // --- Функция инициализации UI ---
-    function initUI() {
+    const initUI = () => {
         document.getElementById('loader').style.display = 'none';
-        showFlow('main-app');
+        document.getElementById('main-app').style.display = 'flex';
         renderMainScreen();
-    }
+    };
 
-    // --- Авторизация и запуск ---
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             userId = user.uid;
             const docRef = firestore.collection('users').doc(userId);
-            const docSnap = await docRef.get();
-            if (docSnap.exists) {
-                // Загружаем данные пользователя, если они есть
-                const userData = docSnap.data();
-                // Объединяем, чтобы сохранить стандартные привычки, если у пользователя их нет
-                dbData = { ...dbData, ...userData };
-            } else {
-                // Создаем новый документ для нового пользователя
-                await docRef.set(dbData);
+            try {
+                const docSnap = await docRef.get();
+                if (docSnap.exists()) {
+                    dbData = { ...dbData, ...docSnap.data() };
+                } else {
+                    await docRef.set(dbData);
+                }
+            } catch (e) {
+                console.error("Firestore read/write error:", e);
+                document.body.innerHTML = "Ошибка подключения к базе данных.";
+                return;
             }
             initUI();
         } else {
-            await auth.signInAnonymously();
+            try {
+                await auth.signInAnonymously();
+            } catch(e) {
+                console.error("Auth error:", e);
+                document.body.innerHTML = "Ошибка авторизации.";
+            }
         }
     });
 });
