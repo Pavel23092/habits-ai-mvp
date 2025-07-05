@@ -7,9 +7,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="loader" class="screen active" style="justify-content: center;"><p>Загрузка...</p></div>
-
-    <!-- Блок Главного Приложения (станет видимым после загрузки) -->
+    <div id="loader" class="screen active" style="justify-content: center; align-items: center;"><p>Загрузка...</p></div>
+    
     <div id="main-app" class="flow-container">
         <header class="app-header">
             <h2>Сегодня</h2>
@@ -17,7 +16,6 @@
         </header>
         <main>
             <div class="identity-reminder"><p>Твои миссии на сегодня:</p></div>
-            <!-- Список привычек будет генерироваться здесь -->
             <ul id="habit-list" class="habit-list"></ul>
         </main>
         <footer>
@@ -27,10 +25,8 @@
             <p id="progress-label">Выполнено 0 из 3</p>
         </footer>
     </div>
-    
-    <!-- (Все остальные экраны, как онбординг и прогресс, мы временно убрали для чистоты. 
-         Мы вернем их, когда понадобится, но сейчас фокусируемся на главном экране.) -->
 
+    <!-- Подключение скриптов Firebase и Telegram -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
