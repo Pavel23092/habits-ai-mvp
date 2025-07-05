@@ -3,6 +3,8 @@
     --tg-theme-text-color: #212121;
     --accent-color: #50A8EB;
     --success-color: #4CD964;
+    --light-gray-color: #E0E0E0;
+    --text-secondary-color: #888;
 }
 
 body {
@@ -13,56 +15,61 @@ body {
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Логика контейнеров и экранов */
-.flow-container, .screen { display: none; height: 100%; flex-direction: column; box-sizing: border-box; }
-.flow-container.active, .screen.active { display: flex; }
-.screen { animation: fadeIn 0.3s ease-in-out; padding: 0 20px; }
+.flow-container { display: none; height: 100%; flex-direction: column; }
+.flow-container.active { display: flex; }
+.screen { display: flex; flex-direction: column; height: 100%; box-sizing: border-box; padding: 0 20px; }
 #loader { justify-content: center; align-items: center; }
 
-header, footer { flex-shrink: 0; }
-#onboarding-flow header { padding-top: 15vh; text-align: center; }
-#onboarding-flow .icon { font-size: 48px; }
-#onboarding-flow h1 { font-size: 28px; }
-#onboarding-flow main { text-align: center; flex-grow: 1; padding: 20px 0; }
-#onboarding-flow footer { padding-bottom: 20px; }
-
+header, footer { flex-shrink: 0; background-color: var(--tg-theme-bg-color); }
 .app-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 10px 0; }
-.app-header h2 { font-size: 18px; margin: 0; font-weight: bold; }
+.app-header h2 { font-size: 24px; margin: 0; font-weight: bold; }
 .icon-button { background: none; border: none; font-size: 24px; cursor: pointer; padding: 5px; color: var(--tg-theme-text-color); }
 
-main { flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
-p { font-size: 16px; line-height: 1.5; color: #555; }
-.input-field { width: calc(100% - 42px); background-color: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-top: 20px; font-size: 16px; }
-.card { background-color: #fff; border-radius: 12px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.card h2 { color: var(--accent-color); margin: 0; font-size: 22px; }
+main { flex-grow: 1; overflow-y: auto; }
+p { font-size: 16px; line-height: 1.5; color: var(--text-secondary-color); }
 
-.identity-reminder p { text-align: center; font-size: 18px; margin-top: 10px; }
-.habit-card, .tip-card { text-align: left; margin-bottom: 16px; }
-.tip-card h3 { margin-top: 0; font-size: 16px; color: var(--accent-color); }
-#main-screen footer { padding-bottom: 20px; }
+.identity-reminder p { text-align: center; font-size: 18px; margin-top: 10px; font-weight: 500; }
 
-.streaks-container { display: flex; justify-content: space-around; text-align: center; margin: 20px 0; }
-.streaks-container h3 { font-size: 24px; margin: 0; }
-.streaks-container p { font-size: 14px; color: #888; margin-top: 4px; }
+/* Список привычек */
+.habit-list { list-style: none; padding: 0; margin: 20px 0; }
+.habit-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: opacity 0.3s, transform 0.3s;
+}
+.habit-item .icon { font-size: 24px; margin-right: 15px; }
+.habit-item .text { flex-grow: 1; font-size: 16px; }
+.habit-item .checkbox {
+    width: 24px; height: 24px;
+    border: 2px solid var(--light-gray-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
 
-.calendar-container { margin-bottom: 20px; }
-.calendar-container h3 { font-size: 20px; margin-bottom: 20px; text-align: center; }
-.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-.day-name { font-weight: bold; color: #888; font-size: 14px; padding: 5px 0; }
-.day-cell { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border-radius: 50%; }
-.day-cell.done { background-color: var(--success-color); color: white; }
-.day-cell.today { border: 2px solid var(--accent-color); }
+/* Состояние "Выполнено" */
+.habit-item.done { opacity: 0.6; }
+.habit-item.done .text { text-decoration: line-through; }
+.habit-item.done .checkbox {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+}
 
-.main-button { width: 100%; padding: 16px; font-size: 16px; font-weight: bold; color: white; background-color: var(--accent-color); border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(80, 168, 235, 0.3); }
-.success-button { background-color: var(--success-color); box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4); }
-.reset-button { margin-top: 30px; background-color: #e57373; padding: 10px 15px; border-radius: 8px; color: white; border: none; font-size: 14px; cursor: pointer; }
-
-.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 100; animation: fadeIn 0.3s; }
-.overlay.active { display: flex; }
-.success-message { background-color: white; padding: 30px; border-radius: 20px; text-align: center; transform: scale(0.9); animation: popIn 0.3s ease-out forwards; }
-.success-message h1 { margin-top: 0; font-size: 56px; }
+/* Футер с прогресс-баром */
+footer { padding: 20px; border-top: 1px solid var(--light-gray-color); }
+.progress-bar-container { height: 8px; background-color: var(--light-gray-color); border-radius: 4px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0%; background-color: var(--success-color); transition: width 0.5s ease-in-out; }
+#progress-label { text-align: center; margin-top: 8px; font-size: 14px; color: var(--text-secondary-color); }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes popIn { to { transform: scale(1); } }
