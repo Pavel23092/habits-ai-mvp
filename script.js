@@ -1,175 +1,154 @@
+// --- Импортируем нужные функции из Firebase ---
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', function() {
     
-    // --- Получаем доступ ко всем нашим элементам на странице ---
-    const onboardingFlow = document.getElementById('onboarding-flow');
-    const mainApp = document.getElementById('main-app');
-    const successOverlay = document.getElementById('success-overlay');
+    // Инициализируем Telegram и Firebase
+    const tg = window.Telegram.WebApp;
+    const firebaseApp = window.firebaseApp;
+    const auth = getAuth(firebaseApp);
+    const firestore = getFirestore(firebaseApp);
+    tg.expand();
 
-    // --- БАЗА ДАННЫХ (на localStorage) ---
-    let db = {
-        onboardingCompleted: false,
-        progress: {}, // Пример: { '2024-07-04': true }
-        streaks: { current: 0, best: 0 },
-        registrationDate: null
-    };
+    let userId = null;
+    let db = { onboardingCompleted: false, progress: {}, streaks: { current: 0, best: 0 }, registrationDate: null };
 
-    // --- Функции для работы с "Базой Данных" ---
-    function loadDB() {
-        const savedDB = localStorage.getItem('habitsAIDB');
-        if (savedDB) {
-            db = JSON.parse(savedDB);
+    // --- Функции для работы с Firestore ---
+    async function loadDB() {
+        if (!userId) { console.error("User not authenticated"); return; }
+        const docRef = doc(firestore, "users", userId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            db = docSnap.data();
+        } else {
+            await setDoc(docRef, db); // Создаем новый документ, если его нет
         }
     }
 
-    function saveDB() {
-        localStorage.setItem('habitsAIDB', JSON.stringify(db));
+    async function saveDB() {
+        if (!userId) { console.error("User not authenticated"); return; }
+        await setDoc(doc(firestore, "users", userId), db);
     }
 
-    // --- Функции для навигации и отображения ---
+    // --- Функции навигации ---
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const screenToShow = document.getElementById(screenId);
-        if (screenToShow) {
-            screenToShow.classList.add('active');
-        }
+        document.getElementById(screenId)?.classList.add('active');
     }
 
     function showFlow(flowId) {
         document.querySelectorAll('.flow-container').forEach(f => f.classList.remove('active'));
-        const flowToShow = document.getElementById(flowId);
-        if (flowToShow) {
-            flowToShow.classList.add('active');
-        }
+        document.getElementById(flowId)?.classList.add('active');
     }
 
-    // --- Функция отрисовки прогресса (с календарем) ---
+    // --- Функция отрисовки прогресса ---
     function renderProgress() {
-        // Обновляем счетчики серий
         document.querySelector('.streaks-container .streak-item:nth-child(1) h3').textContent = `${db.streaks.current} 🔥`;
         document.querySelector('.streaks-container .streak-item:nth-child(2) h3').textContent = `${db.streaks.best} 🏆`;
-
-        // Отрисовка календаря
         const calendarContainer = document.querySelector('.calendar-container');
-        calendarContainer.innerHTML = ''; 
-
-        const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+        calendarContainer.innerHTML = '';
         const today = new Date();
         const month = today.getMonth();
         const year = today.getFullYear();
-
         const header = document.createElement('h3');
-        header.textContent = `${monthNames[month]} ${year}`;
+        header.textContent = `${["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"][month]} ${year}`;
         calendarContainer.appendChild(header);
-
         const daysGrid = document.createElement('div');
         daysGrid.className = 'days-grid';
-        
-        const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-        weekdays.forEach(day => {
+        ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
             const dayEl = document.createElement('div');
-            dayEl.className = 'day-name';
-            dayEl.textContent = day;
-            daysGrid.appendChild(dayEl);
+            dayEl.className = 'day-name'; dayEl.textContent = day; daysGrid.appendChild(dayEl);
         });
-        
         const firstDayOfMonth = new Date(year, month, 1).getDay();
         const emptyDays = (firstDayOfMonth === 0) ? 6 : firstDayOfMonth - 1;
-
-        for (let i = 0; i < emptyDays; i++) {
-            daysGrid.appendChild(document.createElement('div'));
-        }
-      
+        for (let i = 0; i < emptyDays; i++) { daysGrid.appendChild(document.createElement('div')); }
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         for (let i = 1; i <= daysInMonth; i++) {
             const dayEl = document.createElement('div');
-            dayEl.className = 'day-cell';
-            dayEl.textContent = i;
-            
+            dayEl.className = 'day-cell'; dayEl.textContent = i;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            if (db.progress[dateStr]) {
-                dayEl.classList.add('done');
-            }
-            if (i === today.getDate()) {
-                dayEl.classList.add('today');
-            }
+            if (db.progress[dateStr]) { dayEl.classList.add('done'); }
+            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { dayEl.classList.add('today'); }
             daysGrid.appendChild(dayEl);
         }
-        
         calendarContainer.appendChild(daysGrid);
     }
-    
-    // --- ГЛАВНЫЙ ОБРАБОТЧИК ВСЕХ НАЖАТИЙ ---
-    document.body.addEventListener('click', function(event) {
-        const button = event.target.closest('button'); // Ищем именно кнопку
-        if (!button) return; // Если клик не по кнопке, выходим
 
-        // Навигация по онбордингу
-        if (button.dataset.next && button.closest('#onboarding-flow')) {
+    // --- ГЛАВНЫЙ ОБРАБОТЧИК НАЖАТИЙ ---
+    document.body.addEventListener('click', async function(event) {
+        const button = event.target.closest('button');
+        if (!button) return;
+
+        if (button.dataset.next) {
+            const currentFlowId = button.closest('.flow-container').id;
+            showFlow(currentFlowId);
             showScreen(button.dataset.next);
+            if (button.dataset.next === 'progress-screen') renderProgress();
         }
-        
-        // Завершение онбординга
+
         if (button.id === 'finish-onboarding-button') {
             db.onboardingCompleted = true;
             db.registrationDate = new Date().toISOString().split('T')[0];
-            saveDB();
-            showFlow('main-app');
-            showScreen('main-screen');
+            await saveDB();
+            initAppUI();
         }
 
-        // Переход на экран прогресса с главного экрана
-        if (button.closest('[data-next="progress-screen"]')) {
-            renderProgress();
-            showScreen('progress-screen');
-        }
-        
-        // Возврат на главный экран с экрана прогресса
-        if (button.closest('[data-next="main-screen"]')) {
-            showScreen('main-screen');
-        }
-
-        // Кнопка "СДЕЛАЛ!"
         if (button.classList.contains('success-button')) {
             const today = new Date().toISOString().split('T')[0];
-            if (db.progress[today]) return; 
-
+            if (db.progress[today]) return;
             db.progress[today] = true;
-            
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
             db.streaks.current = db.progress[yesterday] ? db.streaks.current + 1 : 1;
-            
-            if (db.streaks.current > db.streaks.best) {
-                db.streaks.best = db.streaks.current;
-            }
-            
-            saveDB();
-            
-            successOverlay.classList.add('active');
-
+            if (db.streaks.current > db.streaks.best) { db.streaks.best = db.streaks.current; }
+            await saveDB();
+            tg.HapticFeedback.notificationOccurred('success');
+            document.getElementById('success-overlay').classList.add('active');
             setTimeout(() => {
-                successOverlay.classList.remove('active');
+                document.getElementById('success-overlay').classList.remove('active');
                 renderProgress();
+                showFlow('main-app');
                 showScreen('progress-screen');
-            }, 2000);
+            }, 1800);
         }
 
-        // Кнопка сброса прогресса (для тестирования)
         if (button.id === 'reset-button') {
-            const isConfirmed = confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?');
+            const isConfirmed = confirm('Вы уверены, что хотите сбросить весь прогресс?');
             if (isConfirmed) {
-                localStorage.removeItem('habitsAIDB');
+                db = { onboardingCompleted: false, progress: {}, streaks: { current: 0, best: 0 }, registrationDate: null };
+                await saveDB();
                 location.reload();
             }
         }
     });
 
-    // --- ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ПРИ ЗАПУСКЕ ---
-    loadDB();
-    if (db.onboardingCompleted) {
-        showFlow('main-app');
-        showScreen('main-screen');
-    } else {
-        showFlow('onboarding-flow');
-        showScreen('welcome-screen');
+    // --- Функция для отрисовки UI после загрузки данных ---
+    function initAppUI() {
+        if (db.onboardingCompleted) {
+            showFlow('main-app');
+            showScreen('main-screen');
+        } else {
+            showFlow('onboarding-flow');
+            showScreen('welcome-screen');
+        }
     }
+
+    // --- АВТОРИЗАЦИЯ И ЗАПУСК ---
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            userId = user.uid;
+            await loadDB();
+            initAppUI();
+        } else {
+            try {
+                const userCredential = await signInAnonymously(auth);
+                userId = userCredential.user.uid;
+                await loadDB();
+                initAppUI();
+            } catch (error) {
+                console.error("Auth Error:", error);
+                document.body.innerHTML = 'Ошибка авторизации. Попробуйте позже.';
+            }
+        }
+    });
 });
