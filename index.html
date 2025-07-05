@@ -7,103 +7,27 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Сообщение о загрузке -->
     <div id="loader" class="screen active" style="justify-content: center;"><p>Загрузка...</p></div>
 
-    <!-- Блок Онбординга -->
     <div id="onboarding-flow" class="flow-container">
-        <!-- Экран 1: Приветствие -->
-        <div id="welcome-screen" class="screen">
-            <header><div class="icon">👋</div><h1>Добро пожаловать!</h1></header>
-            <main><p>Это не просто трекер привычек. Это ваш личный ИИ-коуч для изменения <strong>идентичности</strong>.</p></main>
-            <footer><button data-next="goal-screen" class="main-button">Начать свой путь</button></footer>
-        </div>
-        <!-- Экран 2: Ввод Цели -->
-        <div id="goal-screen" class="screen">
-            <header><h1>Шаг 1: Ваше Направление</h1></header>
-            <main>
-                <p>Каким человеком вы хотите стать?</p>
-                <input type="text" class="input-field" placeholder="Например: стать продуктивным">
-            </main>
-            <footer><button data-next="identity-screen" class="main-button">Далее →</button></footer>
-        </div>
-        <!-- Экран 3: Предложение Идентичности -->
-        <div id="identity-screen" class="screen">
-            <header><h1>Шаг 2: Ваша Идентичность</h1></header>
-            <main>
-                <p>Чтобы стать продуктивным, важно думать и действовать как...</p>
-                <div class="card"><h2>Сосредоточенный создатель</h2></div>
-            </main>
-            <footer><button data-next="habit-screen" class="main-button">Да, это я!</button></footer>
-        </div>
-        <!-- Экран 4: Предложение Привычки -->
-        <div id="habit-screen" class="screen">
-            <header><h1>Шаг 3: Ваша Привычка</h1></header>
-            <main>
-                <p>Начнем с <strong>атомной привычки</strong>, которая занимает меньше 2 минут.</p>
-                <div class="card"><h2>Определять одну задачу дня</h2></div>
-            </main>
-            <footer><button data-next="complete-screen" class="main-button">Начать с этой привычки</button></footer>
-        </div>
-        <!-- Экран 5: Завершение -->
-        <div id="complete-screen" class="screen">
-            <header><div class="icon">🚀</div><h1>Готово! Ваш путь начался.</h1></header>
-            <main><p>Завтра мы начнем ваш путь к новой идентичности.</p></main>
-            <footer><button id="finish-onboarding-button" class="main-button">Отлично!</button></footer>
-        </div>
+        <div id="welcome-screen" class="screen"><header><div class="icon">👋</div><h1>Добро пожаловать!</h1></header><main><p>Это не просто трекер привычек. Это ваш личный ИИ-коуч для изменения <strong>идентичности</strong>.</p></main><footer><button data-next="goal-screen" class="main-button">Начать свой путь</button></footer></div>
+        <div id="goal-screen" class="screen"><header><h1>Шаг 1: Ваше Направление</h1></header><main><p>Каким человеком вы хотите стать?</p><input type="text" class="input-field" placeholder="Например: стать продуктивным"></main><footer><button data-next="identity-screen" class="main-button">Далее →</button></footer></div>
+        <div id="identity-screen" class="screen"><header><h1>Шаг 2: Ваша Идентичность</h1></header><main><p>Чтобы стать продуктивным, важно думать и действовать как...</p><div class="card"><h2>Сосредоточенный создатель</h2></div></main><footer><button data-next="habit-screen" class="main-button">Да, это я!</button></footer></div>
+        <div id="habit-screen" class="screen"><header><h1>Шаг 3: Ваша Привычка</h1></header><main><p>Начнем с <strong>атомной привычки</strong>, которая занимает меньше 2 минут.</p><div class="card"><h2>Определять одну задачу дня</h2></div></main><footer><button data-next="complete-screen" class="main-button">Начать с этой привычки</button></footer></div>
+        <div id="complete-screen" class="screen"><header><div class="icon">🚀</div><h1>Готово! Ваш путь начался.</h1></header><main><p>Завтра мы начнем ваш путь к новой идентичности.</p></main><footer><button id="finish-onboarding-button" class="main-button">Отлично!</button></footer></div>
     </div>
 
-    <!-- Блок Главного Приложения -->
     <div id="main-app" class="flow-container">
-        <!-- Экран 6: Главный экран "Мой День" -->
-        <div id="main-screen" class="screen">
-            <header class="app-header">
-                <h2>Сегодня</h2>
-                <button data-target="progress-screen" class="icon-button">🗓️</button>
-            </header>
-            <main>
-                <div class="identity-reminder"><p>Сегодня ты — <strong>Сосредоточенный создатель</strong></p></div>
-                <div class="habit-card">
-                    <h2>Определять одну задачу дня</h2>
-                    <p>Твоя миссия на сегодня.</p>
-                </div>
-                <div class="tip-card">
-                    <h3>💡 Совет от коуча</h3>
-                    <p>Чтобы не забыть, положи блокнот на видное место. Сделай привычку заметной.</p>
-                </div>
-            </main>
-            <footer><button id="done-button" class="main-button success-button">✅ Сделал!</button></footer>
-        </div>
-        <!-- Экран 7: Экран Прогресса "Мой Путь" -->
-        <div id="progress-screen" class="screen">
-            <header class="app-header">
-                <button data-target="main-screen" class="icon-button">←</button>
-                <h2>Мой Путь</h2>
-                <div style="width: 24px;"></div>
-            </header>
-            <main>
-                <div class="streaks-container">
-                    <div class="streak-item"><h3 id="current-streak">0 🔥</h3><p>Текущая серия</p></div>
-                    <div class="streak-item"><h3 id="best-streak">0 🏆</h3><p>Лучшая серия</p></div>
-                </div>
-                <div id="calendar-container" class="calendar-container"></div>
-                <button id="reset-button" class="reset-button">Сбросить прогресс (для теста)</button>
-            </main>
-        </div>
+        <div id="main-screen" class="screen"><header class="app-header"><h2>Сегодня</h2><button data-target="progress-screen" class="icon-button">🗓️</button></header><main><div class="identity-reminder"><p>Сегодня ты — <strong>Сосредоточенный создатель</strong></p></div><div class="habit-card"><h2>Определять одну задачу дня</h2><p>Твоя миссия на сегодня.</p></div><div class="tip-card"><h3>💡 Совет от коуча</h3><p>Чтобы не забыть, положи блокнот на видное место.</p></div></main><footer><button id="done-button" class="main-button success-button">✅ Сделал!</button></footer></div>
+        <div id="progress-screen" class="screen"><header class="app-header"><button data-target="main-screen" class="icon-button">←</button><h2>Мой Путь</h2><div style="width: 24px;"></div></header><main><div class="streaks-container"><div class="streak-item"><h3 id="current-streak">0 🔥</h3><p>Текущая серия</p></div><div class="streak-item"><h3 id="best-streak">0 🏆</h3><p>Лучшая серия</p></div></div><div id="calendar-container" class="calendar-container"></div><button id="reset-button" class="reset-button">Сбросить прогресс</button></main></div>
     </div>
     
-    <!-- Экран 8: Анимация Успеха -->
-    <div id="success-overlay" class="overlay">
-        <div class="success-message">
-            <h1>🎉</h1><h2>Великолепно!</h2>
-            <p>Еще один голос за твою новую идентичность!</p>
-        </div>
-    </div>
+    <div id="success-overlay" class="overlay"><div class="success-message"><h1>🎉</h1><h2>Великолепно!</h2><p>Еще один голос за твою новую идентичность!</p></div></div>
 
-    <!-- Подключение скриптов Firebase и Telegram -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- НОВЫЙ СПОСОБ ПОДКЛЮЧЕНИЯ СКРИПТОВ -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
 </body>
