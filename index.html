@@ -7,15 +7,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Сообщение о загрузке -->
+    <div id="loader" class="screen active" style="justify-content: center;"><p>Загрузка...</p></div>
 
-    <!-- Блок Онбординга (изначально виден) -->
+    <!-- Блок Онбординга -->
     <div id="onboarding-flow" class="flow-container">
         <!-- Экран 1: Приветствие -->
         <div id="welcome-screen" class="screen">
             <header><div class="icon">👋</div><h1>Добро пожаловать!</h1></header>
-            <main>
-                <p>Это не просто трекер привычек. Это ваш личный ИИ-коуч для изменения <strong>идентичности</strong>.</p>
-            </main>
+            <main><p>Это не просто трекер привычек. Это ваш личный ИИ-коуч для изменения <strong>идентичности</strong>.</p></main>
             <footer><button data-next="goal-screen" class="main-button">Начать свой путь</button></footer>
         </div>
         <!-- Экран 2: Ввод Цели -->
@@ -53,18 +53,18 @@
         </div>
     </div>
 
-    <!-- Блок Главного Приложения (изначально скрыт) -->
+    <!-- Блок Главного Приложения -->
     <div id="main-app" class="flow-container">
         <!-- Экран 6: Главный экран "Мой День" -->
         <div id="main-screen" class="screen">
             <header class="app-header">
                 <h2>Сегодня</h2>
-                <button data-next="progress-screen" class="icon-button">🗓️</button>
+                <button data-target="progress-screen" class="icon-button">🗓️</button>
             </header>
             <main>
                 <div class="identity-reminder"><p>Сегодня ты — <strong>Сосредоточенный создатель</strong></p></div>
                 <div class="habit-card">
-                    <h2>Определить одну задачу дня</h2>
+                    <h2>Определять одну задачу дня</h2>
                     <p>Твоя миссия на сегодня.</p>
                 </div>
                 <div class="tip-card">
@@ -72,64 +72,39 @@
                     <p>Чтобы не забыть, положи блокнот на видное место. Сделай привычку заметной.</p>
                 </div>
             </main>
-            <footer><button class="main-button success-button">✅ Сделал!</button></footer>
+            <footer><button id="done-button" class="main-button success-button">✅ Сделал!</button></footer>
         </div>
         <!-- Экран 7: Экран Прогресса "Мой Путь" -->
         <div id="progress-screen" class="screen">
             <header class="app-header">
-                <button data-next="main-screen" class="icon-button">←</button>
+                <button data-target="main-screen" class="icon-button">←</button>
                 <h2>Мой Путь</h2>
-                <div style="width: 24px;"></div> <!-- Пустышка для выравнивания -->
+                <div style="width: 24px;"></div>
             </header>
             <main>
                 <div class="streaks-container">
-                    <div class="streak-item"><h3>0 🔥</h3><p>Текущая серия</p></div>
-                    <div class="streak-item"><h3>0 🏆</h3><p>Лучшая серия</p></div>
+                    <div class="streak-item"><h3 id="current-streak">0 🔥</h3><p>Текущая серия</p></div>
+                    <div class="streak-item"><h3 id="best-streak">0 🏆</h3><p>Лучшая серия</p></div>
                 </div>
-                <div class="calendar-container"></div>
+                <div id="calendar-container" class="calendar-container"></div>
                 <button id="reset-button" class="reset-button">Сбросить прогресс (для теста)</button>
             </main>
         </div>
     </div>
     
-    <!-- Экран 8: Анимация Успеха (изначально скрыт) -->
+    <!-- Экран 8: Анимация Успеха -->
     <div id="success-overlay" class="overlay">
         <div class="success-message">
-            <h1>🎉</h1>
-            <h2>Великолепно!</h2>
+            <h1>🎉</h1><h2>Великолепно!</h2>
             <p>Еще один голос за твою новую идентичность!</p>
         </div>
     </div>
 
+    <!-- Подключение скриптов Firebase и Telegram -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
-    <!-- ... весь код вашего приложения до этого ... -->
-
-<!-- ВОТ НАШ НОВЫЙ БЛОК -->
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-  // Мы импортируем нужные нам модули в script.js, здесь оставим только app
-  
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBpaUjpnrH2QfLlK1QSr_KGeCJEt_U0OBU",
-    authDomain: "habits-ai-mvp.firebaseapp.com",
-    projectId: "habits-ai-mvp",
-    storageBucket: "habits-ai-mvp.firebasestorage.app",
-    messagingSenderId: "533383525963",
-    appId: "1:533383525963:web:415e1ac36bce2f4c2b7fce",
-    measurementId: "G-F6E8WCSFPL"
-  };
-
-  // Initialize Firebase and make it globally available
-  window.firebaseApp = initializeApp(firebaseConfig);
-</script>
-
-<!-- Старые скрипты остаются на месте -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script type="module" src="script.js"></script> <!-- Добавили type="module" -->
-
 </body>
 </html>
-
